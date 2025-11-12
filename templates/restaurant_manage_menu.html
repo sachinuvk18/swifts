@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="page-title">Manage Menu</h2>
+
+{% if restaurant %}
+  <div class="grid">
+    {% for it in items %}
+      {% set bg = url_for('static', filename=it.image_path) if it.image_path else url_for('static', filename='images/food_default.jpg') %}
+      {% set vsrc = (url_for('static', filename=it.video_path) if VIDEO_SOURCE_MODE=='local' and it.video_path else it.video_url) %}
+      <div class="item-card">
+        <img class="item-bg" src="{{ bg }}">
+        {% if vsrc %}
+        <video class="item-video" preload="none" muted loop playsinline>
+          <source src="{{ vsrc }}" type="video/mp4">
+        </video>
+        {% endif %}
+        <div class="overlay-content">
+          <h3>{{ it.name }}</h3>
+          <p class="muted">{{ it.description }}</p>
+          <p class="price">₹ {{ it.price }}</p>
+          <div class="actions">
+            <a class="btn small" href="{{ url_for('edit_menu_item', rid=restaurant.id, item_id=it.id) }}">Edit</a>
+            <form method="post" action="{{ url_for('delete_menu_item', rid=restaurant.id, item_id=it.id) }}" style="display:inline;">
+              <button class="btn small danger" type="submit">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <p>No menu items yet. Add your first dish!</p>
+    {% endfor %}
+  </div>
+
+  <div style="margin-top:18px;">
+    <a class="btn" href="{{ url_for('create_menu_item', rid=restaurant.id) }}">➕ Add New Item</a>
+  </div>
+
+{% else %}
+  <div class="card">
+    <p>You don’t have a restaurant profile yet.</p>
+    <a class="btn" href="{{ url_for('create_restaurant') }}">Create Restaurant</a>
+  </div>
+{% endif %}
+{% endblock %}

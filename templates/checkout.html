@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="page-title">Checkout</h2>
+<div class="card">
+  <form method="post" class="form" style="max-width:640px">
+    <label>Full Name<input type="text" name="name" required></label>
+    <label>Phone<input type="text" name="phone" required></label>
+    <label>Address<textarea name="address" required></textarea></label>
+    <p><strong>Subtotal: ₹ {{ '%.2f'|format(subtotal) }}</strong></p>
+    <button class="btn" type="submit">Place Order</button>
+  </form>
+</div>
+{% endblock %}

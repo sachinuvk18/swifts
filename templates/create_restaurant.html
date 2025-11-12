@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="page-title">Create Restaurant</h2>
+<form method="post" enctype="multipart/form-data" class="form">
+  <label>Name<input type="text" name="name" required></label>
+  <label>Address<textarea name="address" required></textarea></label>
+  <label>Cuisine<input type="text" name="cuisine" required></label>
+  <label>Cover Image<input type="file" name="image" accept="image/*"></label>
+  <button class="btn" type="submit">Create</button>
+</form>
+{% endblock %}

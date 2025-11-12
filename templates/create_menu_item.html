@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="page-title">Add Item — {{ restaurant.name }}</h2>
+<form method="post" enctype="multipart/form-data" class="form">
+  <label>Name<input type="text" name="name" required></label>
+  <label>Price<input type="number" name="price" step="0.01" required></label>
+  <label>Description<textarea name="description"></textarea></label>
+  <label>Item Image<input type="file" name="image" accept="image/*"></label>
+  <label>Preview Video (local .mp4)<input type="file" name="video" accept="video/*"></label>
+  <label>Preview Video (online URL)<input type="url" name="video_url" placeholder="https://...mp4"></label>
+  <p class="muted">Video source used: <strong>{{ 'video_url (online)' if VIDEO_SOURCE_MODE=='online' else 'video_path (local .mp4)' }}</strong></p>
+  <button class="btn" type="submit">Add Item</button>
+</form>
+{% endblock %}

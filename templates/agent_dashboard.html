@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="page-title">Agent Dashboard</h2>
+
+<!-- ===== Active Deliveries ===== -->
+<h3>My Active Deliveries</h3>
+{% if active_orders %}
+{% for o in active_orders %}
+<div class="card">
+  <h4>Order #{{ o.id }} — ₹{{ '%.2f'|format(o.total_amount) }}</h4>
+  <p><strong>Status:</strong> {{ o.status }}</p>
+  <p><strong>Customer:</strong> {{ o.customer_name }}</p>
+  <p><strong>Restaurant:</strong> {{ o.restaurant_name }}</p>
+  <p><strong>Deliver To:</strong> {{ o.delivery_address }}</p>
+
+  {% if o.status in ['Out for Delivery', 'Picked Up'] %}
+  <form method="post" action="{{ url_for('agent_update_status', oid=o.id) }}">
+    <select name="status">
+      {% for s in ['Out for Delivery', 'Delivered'] %}
+      <option value="{{ s }}" {% if o.status==s %}selected{% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn small" type="submit">Update Status</button>
+  </form>
+  {% else %}
+  <p><em>{{ o.status }}</em></p>
+  {% endif %}
+</div>
+{% endfor %}
+{% else %}
+<p>No active deliveries right now.</p>
+{% endif %}
+
+<hr>
+
+<!-- ===== Available Orders ===== -->
+<h3>Available Deliveries</h3>
+{% if available_orders %}
+{% for order in available_orders %}
+<div class="card">
+  <h4>Order #{{ order.id }} — ₹{{ '%.2f'|format(order.total_amount) }}</h4>
+  <p><strong>Restaurant:</strong> {{ order.restaurant_name }}</p>
+  <p><strong>Customer:</strong> {{ order.delivery_name }} | {{ order.delivery_phone }}</p>
+  <p><strong>Address:</strong> {{ order.delivery_address }}</p>
+  <form method="post" action="{{ url_for('agent_accept', oid=order.id) }}">
+    <button class="btn small" type="submit">Accept Order</button>
+  </form>
+</div>
+{% endfor %}
+{% else %}
+<p>No available orders right now.</p>
+{% endif %}
+{% endblock %}

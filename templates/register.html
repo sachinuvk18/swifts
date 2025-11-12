@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="page-title">Create Account</h2>
+
+<div class="form-container">
+  <form method="post" class="form">
+    <label>Username</label>
+    <input type="text" name="username" placeholder="Enter your name" required>
+
+    <label>Email (Gmail)</label>
+    <input type="email" name="gmail" placeholder="example@gmail.com" required>
+
+    <label>Password</label>
+    <input type="password" name="password" placeholder="Enter password" required>
+
+    <label>Role</label>
+    <select id="role" name="role" required>
+      <option value="customer">Customer</option>
+      <option value="restaurant">Restaurant Owner</option>
+      <option value="agent">Delivery Agent</option>
+    </select>
+
+    <div id="phoneDiv" style="display:none;">
+      <label>Phone Number (for Delivery Agent)</label>
+      <input type="text" name="phone" placeholder="e.g. 9876543210">
+    </div>
+
+    <button class="btn full" type="submit">Register</button>
+  </form>
+</div>
+
+<script>
+  document.getElementById('role').addEventListener('change', function () {
+    const phoneDiv = document.getElementById('phoneDiv');
+    phoneDiv.style.display = this.value === 'agent' ? 'block' : 'none';
+  });
+</script>
+{% endblock %}

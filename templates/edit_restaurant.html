@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="page-title">Edit Restaurant</h2>
+<form method="post" enctype="multipart/form-data" class="form">
+  <label>Name<input type="text" name="name" value="{{ restaurant.name }}" required></label>
+  <label>Address<textarea name="address" required>{{ restaurant.address }}</textarea></label>
+  <label>Cuisine<input type="text" name="cuisine" value="{{ restaurant.cuisine }}" required></label>
+  <label>Cover Image (optional)
+    {% if restaurant.image_path %}
+      <div style="margin-bottom:8px;"><img src="{{ url_for('static', filename=restaurant.image_path) }}" width="180" style="border-radius:8px;"></div>
+    {% endif %}
+    <input type="file" name="image" accept="image/*">
+  </label>
+  <button class="btn" type="submit">Save</button>
+</form>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="restaurant-banner"
+  style="background-image:url('{{ url_for('static', filename=restaurant.image_path) if restaurant.image_path else url_for('static', filename='images/restaurant_default.jpg') }}')">
+  <div class="banner-overlay">
+    <h1 class="restaurant-title">{{ restaurant.name }}</h1>
+    <p class="restaurant-meta">{{ restaurant.cuisine }} • {{ restaurant.address }}</p>
+  </div>
+</div>
+<h3 style="margin-top:22px">Menu</h3>
+<div class="grid">
+  {% for it in items %}
+  {% set bg = url_for('static', filename=it.image_path) if it.image_path else url_for('static',
+  filename='images/food_default.jpg') %}
+  {% set vsrc = (url_for('static', filename=it.video_path) if VIDEO_SOURCE_MODE=='local' and it.video_path else
+  it.video_url) %}
+  <div class="item-card">
+    <img class="item-bg" src="{{ bg }}">
+    {% if vsrc %}
+    <video class="item-video" preload="none" muted loop playsinline>
+      <source src="{{ vsrc }}" type="video/mp4">
+    </video>
+    {% endif %}
+    <div class="overlay-content">
+      <h3>{{ it.name }}</h3>
+      <p class="muted">{{ it.description }}</p>
+      <p class="price">₹ {{ it.price }}</p>
+      <div class="actions">
+        {% if session.get('role') == 'restaurant' and session.get('user_id') == restaurant.owner_id %}
+        <a class="btn small" href="{{ url_for('edit_menu_item', rid=restaurant.id, item_id=it.id) }}">Edit</a>
+        <form method="post" action="{{ url_for('delete_menu_item', rid=restaurant.id, item_id=it.id) }}"
+          style="display:inline">
+          <button class="btn small danger" type="submit">Delete</button>
+        </form>
+        {% else %}
+        {% if session.get('user_id') %}
+        <form method="post" action="{{ url_for('cart_add') }}" onsubmit="return addToCart(event,this)">
+          <input type="hidden" name="item_id" value="{{ it.id }}">
+          <button class="btn small" type="submit">Add to Cart</button>
+        </form>
+        {% else %}
+        <a class="btn small" href="{{ url_for('login') }}">Login to order</a>
+        {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% else %}<p>No items yet.</p>{% endfor %}
+</div>
+
+{% if session.get('role') == 'restaurant' and session.get('user_id') == restaurant.owner_id %}
+<div style="margin-top:12px"><a class="btn" href="{{ url_for('create_menu_item', rid=restaurant.id) }}">Add Item</a>
+</div>
+{% endif %}
+{% endblock %}

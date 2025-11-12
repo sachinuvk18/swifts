@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="page-title">Top restaurants near you</h2>
+<div class="restaurant-grid">
+  {% for r in restaurants %}
+    <div class="restaurant-card">
+      <div class="card-media" style="background-image:url('{{ url_for('static', filename=r.image_path) if r.image_path else url_for('static', filename='images/restaurant_default.jpg') }}')"></div>
+      <div class="card-content">
+        <h3>{{ r.name }}</h3>
+        <p class="muted">{{ r.cuisine }} • {{ r.address }}</p>
+        <a class="btn small" href="{{ url_for('view_restaurant_menu', rid=r.id) }}">View Menu</a>
+      </div>
+    </div>
+  {% else %}<p>No restaurants yet.</p>{% endfor %}
+</div>
+{% endblock %}

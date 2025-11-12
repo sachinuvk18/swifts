@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="page-title">Edit Agent Profile</h2>
+
+<form method="post" class="form">
+    <label>Username</label>
+    <input type="text" name="username" value="{{ user.username }}" required>
+
+    <label>Gmail</label>
+    <input type="email" name="gmail" value="{{ user.gmail }}" required>
+
+    <label>Phone Number</label>
+    <input type="text" name="phone" value="{{ user.phone or '' }}" required>
+
+    <label>New Password (leave blank to keep current)</label>
+    <input type="password" name="password">
+
+    <button class="btn" type="submit">Update Profile</button>
+</form>
+{% endblock %}

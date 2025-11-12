@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="page-title">Edit Item — {{ item.name }}</h2>
+<form method="post" enctype="multipart/form-data" class="form">
+  <label>Name<input type="text" name="name" value="{{ item.name }}" required></label>
+  <label>Price<input type="number" step="0.01" name="price" value="{{ item.price }}" required></label>
+  <label>Description<textarea name="description">{{ item.description }}</textarea></label>
+  <label>Item Image
+    {% if item.image_path %}<div style="margin-bottom:8px;"><img src="{{ url_for('static', filename=item.image_path) }}" width="150" style="border-radius:8px;"></div>{% endif %}
+    <input type="file" name="image" accept="image/*">
+  </label>
+  <label>Preview Video (local)
+    {% if item.video_path %}<video src="{{ url_for('static', filename=item.video_path) }}" width="180" controls style="border-radius:8px;margin-bottom:8px;"></video>{% endif %}
+    <input type="file" name="video" accept="video/*">
+  </label>
+  <label>Preview Video (online URL)
+    {% if item.video_url %}<div class="muted">{{ item.video_url }}</div>{% endif %}
+    <input type="url" name="video_url" placeholder="https://...mp4">
+  </label>
+  <p class="muted">Video source used: <strong>{{ 'video_url (online)' if VIDEO_SOURCE_MODE=='online' else 'video_path (local .mp4)' }}</strong></p>
+  <button class="btn" type="submit">Save</button>
+</form>
+{% endblock %}

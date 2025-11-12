@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="page-title">Your Orders</h2>
+
+{% if orders %}
+<table class="customer-orders-table">
+  <thead>
+    <tr>
+      <th>Order ID</th>
+      <th>Restaurant</th>
+      <th>Placed On</th>
+      <th>Amount (₹)</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for o in orders %}
+    <tr>
+      <td>#{{ o.id }}</td>
+      <td>{{ o.restaurant }}</td>
+      <td>{{ o.created_at.strftime('%d %b %Y, %I:%M %p') }}</td>
+      <td>{{ '%.2f'|format(o.total_amount) }}</td>
+      <td>
+        <span class="status-pill status-{{ o.status|lower|replace(' ', '-') }}">
+          {{ o.status }}
+        </span>
+      </td>
+      <td>
+        <a class="btn small" href="{{ url_for('order_details', order_id=o.id) }}">Details</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No orders yet.</p>
+{% endif %}
+{% endblock %}

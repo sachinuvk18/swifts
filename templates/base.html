@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SwiftServe</title>
+
+  <!-- Favicon & Styles -->
+  <link rel="icon" href="{{ url_for('static', filename='images/logo.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  <!-- Socket.io -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+
+<body >
+  <!-- ===== Header / Navbar ===== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <!-- Brand / Logo -->
+      <a class="brand" href="{{ url_for('index') }}">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="SwiftServe Logo" class="brand-logo">
+        <span class="brand-name">SwiftServe</span>
+      </a>
+
+      <!-- Navigation Menu -->
+      <nav class="nav">
+        {% if session.get('user_id') %}
+
+        {# -------- RESTAURANT OWNER NAV -------- #}
+        {% if session.get('role') == 'restaurant' %}
+        <a href="{{ url_for('restaurant_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('restaurant_manage_menu') }}">Manage Menu</a>
+        <a href="{{ url_for('restaurant_orders') }}">Orders</a>
+        <a href="{{ url_for('edit_restaurant') }}">Edit Restaurant</a>
+        <a href="{{ url_for('edit_profile') }}">Profile</a>
+        <a class="btn small danger" href="{{ url_for('logout') }}">Logout</a>
+
+        {# -------- DELIVERY AGENT NAV -------- #}
+        {% elif session.get('role') == 'agent' %}
+        <a href="{{ url_for('agent_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('agent_orders') }}">My Deliveries</a>
+        <a href="{{ url_for('edit_profile') }}">Profile</a>
+        <a class="btn small danger" href="{{ url_for('logout') }}">Logout</a>
+
+        {# -------- CUSTOMER NAV -------- #}
+        {% else %}
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('customer_orders') }}">My Orders</a>
+        <a href="{{ url_for('cart_view') }}">Cart</a>
+        <a href="{{ url_for('edit_profile') }}">Profile</a>
+        <a class="btn small danger" href="{{ url_for('logout') }}">Logout</a>
+        {% endif %}
+
+        {# -------- NOT LOGGED IN -------- #}
+        {% else %}
+        <a class="btn small" href="{{ url_for('login') }}">Login</a>
+        <a class="btn small" href="{{ url_for('register') }}">Register</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===== Main Content ===== -->
+  <main class="container main-pad">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class="flashes">
+      {% for m in messages %}
+      <li>{{ m }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    SwiftServe — Real-Time Delivery Module (v3)
+  </footer>
+
+  <!-- ===== Global JS ===== -->
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+
+</html>

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="page-title">Restaurant Dashboard</h2>
+
+{% if restaurant %}
+<!-- Restaurant Banner -->
+{% if restaurant.image_path %}
+{% set banner_path = url_for('static', filename=restaurant.image_path) %}
+{% else %}
+{% set banner_path = url_for('static', filename='images/restaurant_default.jpg') %}
+{% endif %}
+
+<div class="restaurant-banner" style="background-image: url('{{ banner_path }}');">
+
+  <div class="banner-overlay">
+    <h1 class="restaurant-title">{{ restaurant.name }}</h1>
+    <p class="restaurant-meta">{{ restaurant.cuisine }} • {{ restaurant.address }}</p>
+  </div>
+</div>
+
+<!-- Read-only Menu Preview -->
+<h3 style="margin-top:22px">Your Menu</h3>
+<div class="grid">
+  {% for it in items %}
+  {% set bg = url_for('static', filename=it.image_path) if it.image_path else url_for('static',
+  filename='images/food_default.jpg') %}
+  {% set vsrc = (url_for('static', filename=it.video_path) if VIDEO_SOURCE_MODE=='local' and it.video_path else
+  it.video_url) %}
+  <div class="item-card">
+    <img class="item-bg" src="{{ bg }}">
+    {% if vsrc %}
+    <video class="item-video" preload="none" muted loop playsinline>
+      <source src="{{ vsrc }}" type="video/mp4">
+    </video>
+    {% endif %}
+    <div class="overlay-content">
+      <h3>{{ it.name }}</h3>
+      <p class="muted">{{ it.description }}</p>
+      <p class="price">₹ {{ it.price }}</p>
+    </div>
+  </div>
+  {% else %}
+  <p>No menu items available yet.</p>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card">
+  <p>You don't have a restaurant yet.</p>
+  <a class="btn" href="{{ url_for('create_restaurant') }}">Create Restaurant</a>
+</div>
+{% endif %}   
+{% endblock %}

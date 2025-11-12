@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="page-title">Restaurant Orders</h2>
+
+{% if orders %}
+<table class="order-table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Customer</th>
+      <th>Amount (₹)</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for o in orders %}
+    <tr>
+      <td>#{{ o.id }}</td>
+      <td>{{ o.customer }}</td>
+      <td>{{ '%.2f'|format(o.total_amount) }}</td>
+      <td>{{ o.status }}</td>
+      <td>
+        {% if o.status == 'Placed' %}
+        <form method="post" action="{{ url_for('restaurant_order_action', oid=o.id) }}" style="display:inline;">
+          <button class="btn small" name="action" value="accept">Accept</button>
+          <button class="btn small danger" name="action" value="reject">Reject</button>
+        </form>
+        {% elif o.status == 'Preparing' %}
+        <form method="post" action="{{ url_for('restaurant_order_action', oid=o.id) }}" style="display:inline;">
+          <button class="btn small success" name="action" value="ready">Mark Ready</button>
+        </form>
+        {% else %}
+        <span class="badge">{{ o.status }}</span>
+        {% endif %}
+        <a class="btn small outline" href="{{ url_for('restaurant_order_details', oid=o.id) }}">View</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No orders yet.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="page-title">My Delivered Orders</h2>
+
+{% if delivered_orders %}
+<table class="delivered-orders-table">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Restaurant</th>
+            <th>Amount (₹)</th>
+            <th>Delivered To</th>
+            <th>Delivered On</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for d in delivered_orders %}
+        <tr>
+            <td>#{{ d.id }}</td>
+            <td>{{ d.customer_name }}</td>
+            <td>{{ d.restaurant_name }}</td>
+            <td>{{ '%.2f'|format(d.total_amount) }}</td>
+            <td>{{ d.delivery_address }}</td>
+            <td>{{ d.created_at.strftime('%d-%m-%Y %I:%M %p') }}</td>
+            <td>
+                <span class="status-pill status-{{ d.status|lower|replace(' ', '-') }}">
+                    {{ d.status }}
+                </span>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No delivered orders yet.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="page-title">Your Cart</h2>
+{% if cart %}
+  <div class="cart-list">
+    {% for it in cart %}
+      <div class="cart-row">
+        <img class="cart-thumb" src="{{ url_for('static', filename=it.image_path) if it.image_path else url_for('static', filename='images/food_default.jpg') }}">
+        <div class="cart-info">
+          <h4>{{ it.name }}</h4>
+          <form method="post" action="{{ url_for('cart_update') }}" class="qty-form">
+            <input type="hidden" name="item_id" value="{{ it.item_id }}">
+            <label>Qty <input type="number" name="qty" value="{{ it.qty }}" min="1"></label>
+            <button class="btn small" type="submit">Update</button>
+          </form>
+        </div>
+        <div class="cart-price">₹ {{ '%.2f'|format(it.price * it.qty) }}</div>
+        <form method="post" action="{{ url_for('cart_remove') }}">
+          <input type="hidden" name="item_id" value="{{ it.item_id }}">
+          <button class="btn small danger" type="submit">Remove</button>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="cart-summary">
+    <div>Subtotal: <strong>₹ {{ '%.2f'|format(subtotal) }}</strong></div>
+    <a class="btn" href="{{ url_for('checkout') }}">Proceed to Checkout</a>
+  </div>
+{% else %}
+  <p>Your cart is empty.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="page-title">Order #{{ order.id }} — ₹ {{ '%.2f'|format(order.total_amount) }}</h2>
+
+<div class="card order-details">
+
+  <!-- === Order Information === -->
+  <table class="order-table compact">
+    <tbody>
+      <tr>
+        <th>Status</th>
+        <td>
+          <span class="status-pill status-{{ order.status|lower|replace(' ', '-') }}">
+            {{ order.status }}
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <th>Placed On</th>
+        <td>{{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}</td>
+      </tr>
+      <tr>
+        <th>Customer</th>
+        <td>{{ order.delivery_name }} — {{ order.delivery_phone }}</td>
+      </tr>
+      <tr>
+        <th>Delivery Address</th>
+        <td>{{ order.delivery_address }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr class="hr-soft">
+
+  <!-- === Ordered Items === -->
+  <h3 style="margin-top:20px;">Ordered Items</h3>
+  <table class="order-table items-table">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Quantity</th>
+        <th>Price (₹)</th>
+        <th>Subtotal (₹)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for it in items %}
+      <tr>
+        <td>{{ it.name }}</td>
+        <td>{{ it.qty }}</td>
+        <td>{{ '%.2f'|format(it.price) }}</td>
+        <td><strong>{{ '%.2f'|format(it.price * it.qty) }}</strong></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3" style="text-align:right;"><strong>Total Amount:</strong></td>
+        <td><strong>₹ {{ '%.2f'|format(order.total_amount) }}</strong></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div style="margin-top:18px;">
+    <a class="btn small outline" href="{{ url_for('restaurant_orders') }}">← Back to Orders</a>
+  </div>
+</div>
+{% endblock %}

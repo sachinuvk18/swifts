@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="order-detail" data-order-id="{{ order.id }}">
+  <h2>Order #{{ order.id }}</h2>
+  <p>Status: <strong id="order-status">{{ order.status }}</strong></p>
+  <p>Placed: {{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}</p>
+  <p>Deliver to: <b>{{ order.delivery_name }}</b> — {{ order.delivery_phone }}</p>
+  <p class="muted">{{ order.delivery_address }}</p>
+
+  {% if order.agent_name %}
+  <p><b>Delivery Agent:</b> {{ order.agent_name }} {% if order.agent_phone %}({{ order.agent_phone }}){% endif %}</p>
+  {% endif %}
+
+  <h3>Items</h3>
+  <ul>
+    {% for item in items %}
+    <li>{{ item.qty }} × {{ item.name }} — ₹ {{ '%.2f'|format(item.price * item.qty) }}</li>
+    {% endfor %}
+  </ul>
+
+  <p><strong>Total: ₹ {{ '%.2f'|format(order.total_amount) }}</strong></p>
+  <a class="btn" href="{{ url_for('customer_orders') }}">Back to Orders</a>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}

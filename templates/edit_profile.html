@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="page-title">Edit Profile</h2>
+<form method="post" class="form">
+  <label>Username<input type="text" name="username" value="{{ user.username }}" required></label>
+  <label>Gmail<input type="email" name="gmail" value="{{ user.gmail }}" required></label>
+  <label>New Password<input type="password" name="password" placeholder="Leave blank to keep current"></label>
+  <button class="btn" type="submit">Save</button>
+</form>
+{% endblock %}
