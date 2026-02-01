@@ -655,6 +655,18 @@ def agent_update_status(oid):
     cur.close(); conn.close()
     return redirect(url_for('agent_dashboard'))
 
+@app.route("/dashboard")
+def restaurant_dashboard():
+    restaurant = get_restaurant_for_current_user()
+    items = get_menu_items(restaurant.id) if restaurant else []
+    return render_template(
+        "restaurant_dashboard.html",
+        restaurant=restaurant,
+        items=items,
+        VIDEO_SOURCE_MODE="local"  # or "remote" if using URLs
+    )
+
+
 # ========= Agent API helper (AJAX) =========
 @app.route('/agent/available-json')
 @login_required(role='agent')

@@ -1,53 +1,135 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2 class="page-title">Agent Dashboard</h2>
+<h2 class="page-title">Restaurant Dashboard</h2>
 
-<!-- ===== Active Deliveries ===== -->
-<h3>My Active Deliveries</h3>
-{% if active_orders %}
-{% for o in active_orders %}
-<div class="card">
-  <h4>Order #{{ o.id }} — ₹{{ '%.2f'|format(o.total_amount) }}</h4>
-  <p><strong>Status:</strong> {{ o.status }}</p>
-  <p><strong>Customer:</strong> {{ o.customer_name }}</p>
-  <p><strong>Restaurant:</strong> {{ o.restaurant_name }}</p>
-  <p><strong>Deliver To:</strong> {{ o.delivery_address }}</p>
-
-  {% if o.status in ['Out for Delivery', 'Picked Up'] %}
-  <form method="post" action="{{ url_for('agent_update_status', oid=o.id) }}">
-    <select name="status">
-      {% for s in ['Out for Delivery', 'Delivered'] %}
-      <option value="{{ s }}" {% if o.status==s %}selected{% endif %}>{{ s }}</option>
-      {% endfor %}
-    </select>
-    <button class="btn small" type="submit">Update Status</button>
-  </form>
+{% if restaurant %}
+  <!-- Restaurant Banner -->
+  {% if restaurant.image_path %}
+    {% set banner_path = url_for('static', filename=restaurant.image_path) %}
   {% else %}
-  <p><em>{{ o.status }}</em></p>
+    {% set banner_path = url_for('static', filename='images/restaurant_default.jpg') %}
   {% endif %}
-</div>
-{% endfor %}
-{% else %}
-<p>No active deliveries right now.</p>
-{% endif %}
 
-<hr>
+  <div class="restaurant-banner" style="background-image: url('{{ banner_path }}');">
+    <div class="banner-overlay">
+      <h1 class="restaurant-title">{{ restaurant.name }}</h1>
+      <p class="restaurant-meta">{{ restaurant.cuisine }} • {{ restaurant.address }}</p>
+    </div>
+  </div>
 
-<!-- ===== Available Orders ===== -->
-<h3>Available Deliveries</h3>
-{% if available_orders %}
-{% for order in available_orders %}
-<div class="card">
-  <h4>Order #{{ order.id }} — ₹{{ '%.2f'|format(order.total_amount) }}</h4>
-  <p><strong>Restaurant:</strong> {{ order.restaurant_name }}</p>
-  <p><strong>Customer:</strong> {{ order.delivery_name }} | {{ order.delivery_phone }}</p>
-  <p><strong>Address:</strong> {{ order.delivery_address }}</p>
-  <form method="post" action="{{ url_for('agent_accept', oid=order.id) }}">
-    <button class="btn small" type="submit">Accept Order</button>
-  </form>
-</div>
-{% endfor %}
+  <!-- Read-only Menu Preview -->
+  <h3 style="margin-top:22px">Your Menu</h3>
+  <div class="grid">
+    {% for it in items %}
+      {% set bg = url_for('static', filename=it.image_path) if it.image_path else url_for('static', filename='images/food_default.jpg') %}
+      {% set vsrc = (url_for('static', filename=it.video_path) if VIDEO_SOURCE_MODE=='local' and it.video_path else it.video_url) %}
+      <div class="item-card">
+        <img class="item-bg" src="{{ bg }}" alt="{{ it.name }}">
+        
+        {% if vsrc %}
+        <video class="item-video" preload="metadata" muted loop playsinline poster="{{ bg }}">
+          <source src="{{ vsrc }}" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        {% endif %}
+
+        <div class="overlay-content">
+          <h3>{{ it.name }}</h3>
+          <p class="muted">{{ it.description }}</p>
+          <p class="price">₹ {{ it.price }}</p>
+        </div>
+      </div>
+    {% else %}
+      <p>No menu items available yet.</p>
+    {% endfor %}
+  </div>
 {% else %}
-<p>No available orders right now.</p>
-{% endif %}
+  <div class="card">
+    <p>You don't have a restaurant yet.</p>
+    <a class="btn" href="{{ url_for('create_restaurant') }}">Create Restaurant</a>
+  </div>
+{% endif %}   
+
+<!-- ===================== -->
+<!-- Video Hover Behavior -->
+<!-- ===================== -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.item-video').forEach(video => {
+    video.addEventListener('mouseenter', () => video.play());
+    video.addEventListener('mouseleave', () => {
+      video.pause();
+      video.currentTime = 0;
+    });
+  });
+});
+</script>
+
+<!-- ===================== -->
+<!-- Styling for Menu Cards -->
+<!-- ===================== -->
+<style>
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  margin-top: 15px;
+}
+
+.item-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.item-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.item-bg,
+.item-video {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+  transition: opacity .3s ease-in-out;
+}
+
+.item-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
+.item-card:hover .item-video {
+  opacity: 1;
+}
+
+.item-card:hover .item-bg {
+  opacity: 0;
+}
+
+.overlay-content {
+  padding: 12px 14px;
+  background-color: white;
+}
+
+.overlay-content h3 {
+  margin: 6px 0 4px;
+}
+
+.muted {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.price {
+  font-weight: bold;
+  margin-top: 4px;
+}
+</style>
 {% endblock %}
